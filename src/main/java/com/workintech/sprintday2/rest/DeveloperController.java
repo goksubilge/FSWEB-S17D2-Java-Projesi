@@ -1,4 +1,4 @@
-package rest;
+package com.workintech.sprintday2.rest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
