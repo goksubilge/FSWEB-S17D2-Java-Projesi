@@ -2,7 +2,7 @@ package com.workintech.sprintday2.tax;
 
 import org.springframework.stereotype.Component;
 
-@Component // for reading spring
+@Component // for reading spring   // create Instances the developerTax class
 public class DeveloperTax implements Taxable{
     @Override
     public double getSimpleTaxRate() {
