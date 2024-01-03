@@ -21,7 +21,8 @@ private Taxable taxable;
     public void postConst (){
     developers = new HashMap<>();
 }
-@Autowired
+
+@Autowired   // taxable = new DeveloperTax()    ( Bu dersin özelliği autowired 'in bunu yapabilmesi)
     public DeveloperController(Taxable taxable) {
         this.taxable = taxable;
     }
@@ -39,5 +40,22 @@ private Taxable taxable;
     public List<Developer> get(){
     return developers.values().stream().toList();
 }
+@GetMapping("/{id}")
+    public Developer getById(@PathVariable int id){
+    return developers.get(id);
+}
 
+@PutMapping("/{id}") // (get hariç id yönetimini sql veritabanına atacağım, böylece orada tutulacak ben set'lerle çalışmayacağım burada)
+    public Developer update(@PathVariable int id, @RequestBody Developer developer){
+    Developer updatedDveloper = CreateDeveloper.nettoDeveloper(developer, taxable);
+    developers.put(id,updatedDveloper);
+    return updatedDveloper;
+}
+
+@DeleteMapping("/{id}")
+    public Developer remove(@PathVariable int id){
+    Developer removedDeveloper = developers.get(id);
+    developers.remove(id);
+    return removedDeveloper;
+}
 }
