@@ -7,6 +7,7 @@ import com.workintech.sprintday2.tax.Taxable;
 import com.workintech.sprintday2.validation.DevValidation;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -29,10 +30,11 @@ private Taxable taxable;
         this.taxable = taxable;
     }
 @PostMapping("/")
+@ResponseStatus(HttpStatus.CREATED) // success state lerde çalışacak response ne olacak diye seçtim. başarılı create (Post ta 201 döndürüyor bu seçim)  // Note 1:  Post, create, save => success => 201    // Note 2:  Read, get => 200 döndürür
     public DevResponse save(@RequestBody Developer developer){
     // dto
     if(DevValidation.isDeveloperExist(developers, developer.getId())){
-        return new DevResponse(null, "Developer with given id already exist: " + developer.getId(), 400);
+        return new DevResponse(null, "Developer with given id (Post) already exist: " + developer.getId(), 400);
     }
     Developer savedDeveloper = CreateDeveloper.nettoDeveloper(developer,taxable);
     //Validation:
@@ -51,14 +53,17 @@ private Taxable taxable;
     if (DevValidation.isDeveloperExist(developers, id)) {
         return new DevResponse(developers.get(id), "Success", 200);
     }
-    return new DevResponse(null,"Dev w given id is not exist: " + id, 404);
+    return new DevResponse(null,"Dev w given id (Get) is not exist: " + id, 404);
 }
 
 @PutMapping("/{id}") // (get hariç id yönetimini sql veritabanına atacağım, böylece orada tutulacak ben set'lerle çalışmayacağım burada)
-    public Developer update(@PathVariable int id, @RequestBody Developer developer){
-    Developer updatedDveloper = CreateDeveloper.nettoDeveloper(developer, taxable);
-    developers.put(id,updatedDveloper);
-    return updatedDveloper;
+    public DevResponse update(@PathVariable int id, @RequestBody Developer developer){
+    if(!DevValidation.isDeveloperExist(developers,id)){
+        return new DevResponse(null, "Dev w given id (Put) is not exist: " + id, 404);
+    }
+    Developer updatedDeveloper = CreateDeveloper.nettoDeveloper(developer, taxable);
+    developers.put(id,updatedDeveloper);
+    return new DevResponse(updatedDeveloper, " Put Success", 200);
 }
 
 @DeleteMapping("/{id}")
